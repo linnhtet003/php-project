@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table with Image and Button Resize Hover Effect</title>
+    <title>Slider List</title>
     <style>
     body {
         font-family: Arial, sans-serif;
@@ -45,9 +45,6 @@
     }
 
     img {
-        max-width: 80px;
-        height: auto;
-        border-radius: 8px;
         transition: transform 0.3s ease;
         /* Smooth transition for image resize */
     }
@@ -69,33 +66,10 @@
         font-style: italic;
     }
 
-    .action-btn {
-        padding: 8px 12px;
-        margin: 0 5px;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: transform 0.3s ease;
-        /* Smooth transition for button resize */
-    }
-
-    .action-btn:hover {
+    .btn-ok:hover {
         transform: scale(1.1);
-        /* Resize button to 110% of its original size on hover */
     }
 
-    .view-btn {
-        background-color: #4CAF50;
-    }
-
-    .edit-btn {
-        background-color: #FFA500;
-    }
-
-    .delete-btn {
-        background-color: #FF6347;
-    }
     </style>
 </head>
 
@@ -108,15 +82,15 @@
             <th>Title</th>
             <th>Description</th>
             <th>Image</th>
-            <th>Actions</th>
+            <th style="text-align: center;" colspan="3">Actions</th>
         </tr>
 
         <?php
             error_reporting(1);
             include('connection.php');
-            $i = 1;
             $data = "SELECT * FROM sliderlist ORDER BY id DESC";
             $val = $con->query($data);
+            $i = 1;
             if ($val->num_rows > 0){
               while(list($id,$title,$description,$img) = mysqli_fetch_array($val)){
                 echo "<tr>";
@@ -125,12 +99,14 @@
             echo "<td class='description'>".$description."</td>";
             echo "<td><img src='./img/$img' width='100' 
                           style='border-radius:20px;' /></td>";
-            echo "<td>";
-                echo "<button class='action-btn view-btn'>View</button>";
-                echo "<button class='action-btn edit-btn'>Edit</button>";
-                echo "<button class='action-btn delete-btn'>Delete</button>";
-            echo "</td>";
-        echo "</tr>";
+
+            echo "<td><a href='details-slider.php?id=$id'><img src='images/detail.png' width='35' alt='detail' /></a></td>";
+
+            echo "<td><a href='edit-slider.php?id=$id&img=$img'><img src='images/edit.png' width='35' alt='edit' /></a></td>";
+
+            echo "<td><a href='delete-slider.php?id=$id&img=$img'><img src='images/delete.png' width='35' alt='delete' /></a></td>";
+
+            echo "</tr>";
               }
             }else{
               echo "<h1 colspan='8'><b>No data available</b></h1>";

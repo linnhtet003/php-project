@@ -4,56 +4,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Slider</title>
+    <title>Edit Slider</title>
 </head>
 
 <body>
 
     <div class="form">
         <div class="title">Welcome Admin</div>
-        <div class="subtitle">Let's create our Slider!</div>
+        <div class="subtitle">Let's edit our Slider!</div>
 
-        <?php
-        error_reporting(1);
-        include('connection.php');
-            if(isset($_POST['sub'])) {
-                $slider_title=$_POST['title'];
-                $slider_desc=$_POST['description'];
-                $image=$_FILES["image"]["name"];
+<?php
+    error_reporting(1);
+    include('connection.php');
 
-                $query=mysqli_query($con, "insert into sliderlist(title,description,img) value('$slider_title','$slider_desc','$image')");
+    $id = $_GET['id'];
+    $image = $_GET['img'];
+    $val = $con->query("SELECT * FROM sliderlist WHERE id=$id");
+    $data = mysqli_fetch_array($val);
 
-                    if ($query) {
-                        move_uploaded_file($_FILES["image"]["tmp_name"],"img/".$image);
-                        echo "<script>alert('Slider has been added.');</script>";
-                        echo "<script>window.location.href = 'slider.php'</script>";
-                    } else {
-                        echo "<script>alert('Something Went Wrong. Please try again.');</script>";  	
-                    }
-                }
+    if(isset($_POST['sub'])){
+        $product_title = $_POST['title'];
+        $product_description = $_POST['description'];
+        
 
-            ?>
+        $con->query("UPDATE sliderlist SET title='$product_title', description='$product_description' WHERE id=$id");
+        header('location:slider.php');
+    }
+?>
+
+
         <form method="POST" enctype="multipart/form-data">
 
 
             <div class="input-container ic1">
-                <input id="title" class="input" name="title" type="text" placeholder=" " required />
+                <input id="title" class="input" name="title" type="text" value="<?php echo $data['title']; ?>" placeholder=" " required />
                 <div class="cut"></div>
                 <label for="title" class="placeholder">Title:</label>
             </div>
             <div class="input-container-2 ic2">
                 <textarea id="description" class="input" name="description" type="text" placeholder=" "
-                    required></textarea>
+                    required><?php echo $data['description']; ?></textarea>
                 <div class="cut"></div>
                 <label for="description" class="placeholder">Description:</label>
             </div>
-
-                <div class="drag-drop">
-                    <div id="drop-zone" class="drop-zone">
-                        <p>Drag & Drop an image here</p>
-                    </div>
-                    <input type="file" id="file-input" accept="image/*" name="image" style="display: none;" required />
-                </div>
 
             <div class="drag-drop">
                 <button type="text" name="sub" class="submit">Submit</button>
@@ -78,7 +71,7 @@
         box-sizing: border-box;
         height: auto;
         padding: 20px;
-        width: 520px;
+        width: 400px;
     }
 
     /* drag and drop */
@@ -90,28 +83,7 @@
         margin-top: 30px;
     }
 
-    .drop-zone {
-        width: 100%;
-        height: auto;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
-        display: flex;
-        color: #65657b;
-        justify-content: center;
-        align-items: center;
-        background-color: #303245;
-    }
-
-    .drop-zone.hover {
-        border-color: #0b76ef;
-    }
-
-    .drop-zone img {
-        max-width: 100%;
-        max-height: 100%;
-    }
-
-    /* end drag and drop */
+    
 
     .title {
         color: #eee;
@@ -139,7 +111,7 @@
     }
 
     .input-container-2 {
-        height: 120px;
+        height: 100px;
         position: relative;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
         width: 100%;
@@ -238,52 +210,6 @@
     }
     </style>
 
-    <script>
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('file-input');
-
-    // Add event listeners for drag and drop functionality
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('hover');
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('hover');
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('hover');
-
-        const files = e.dataTransfer.files;
-        if (files.length && files[0].type.startsWith('image/')) {
-            handleFileUpload(files[0]);
-        }
-    });
-
-    // Trigger file input when drop zone is clicked
-    dropZone.addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file && file.type.startsWith('image/')) {
-            handleFileUpload(file);
-        }
-    });
-
-    // Function to handle file upload and display
-    function handleFileUpload(file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = document.createElement('img');
-            img.src = e.target.result;
-            dropZone.innerHTML = '';
-            dropZone.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-    }
-    </script>
 
 </body>
 
